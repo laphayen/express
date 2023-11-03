@@ -1,16 +1,13 @@
-const express = require('express');
+const express = require("express");
+const db = require("./models/index.js");
+const todosRouter = require("./routes/todos.router.js");
+
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// app.use - 미들웨어 사용 가능
+app.use("/api", express.json(), todosRouter);
+app.use(express.static("./assets"));
+
+app.listen(8080, () => {
+    console.log("서버가 켜졌습니다.");
 });
-
-app.listen(port, () => {
-    console.log(port, '포트로 서버 열림');
-});
-
-const goodsRouter = require("./routes/goods");
-
-// localhost:3000/api -> goodsRouter
-app.use("/api", [goodsRouter]);

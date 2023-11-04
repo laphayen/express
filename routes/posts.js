@@ -26,6 +26,55 @@ router.post('/', async (req, res) => {
     }
 });
 
+// 게시글 조회 API - 제목, 작성자, 작성일, 내용 조회하기
+router.get('/:id', async (req, res) => {
+    const { postId } = req.params;
+    try {
+        const post = await Post.findOne({ postId });
+        res.json({ post });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+// 게시글 수정 API - API 호출 시 입력된 비밀번호와 게시글의 비밀번호가 일치하면 게시글 수정하기
+router.patch('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, author, password, contents } = req.body;
+    try {
+        const post = await Post.findOne({ _id: id });
+        if (post.password === password) {
+            const result = await Post.updateOne({ _id: id }, { title, author, password, contents });
+            res.json({ result });
+        } else {
+            res.json({ msg: '비밀번호가 일치하지 않습니다.' });
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+// 게시글 삭제 API - API 호출 시 입력된 비밀번호와 게시글의 비밀번호가 일치하면 게시글 삭제하기
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { password } = req.body;
+    try {
+        const post = await Post.findOne({ _id: id });
+        if (post.password === password) {
+            const result = await Post.deleteOne({ _id: id });
+            res.json({ result });
+        } else {
+            res.json({ msg: '비밀번호가 일치하지 않습니다.' });
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+
 // const posts = [
 //     {
 //         postsId: 1,
